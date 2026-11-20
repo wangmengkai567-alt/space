@@ -1,0 +1,189 @@
+{
+  "edges": [
+    {
+      "from": "lakes",
+      "slot": "vector",
+      "to": "b150"
+    },
+    {
+      "from": "lakes",
+      "slot": "vector",
+      "to": "b450"
+    },
+    {
+      "from": "lakes",
+      "slot": "vector",
+      "to": "b600"
+    },
+    {
+      "from": "lakes",
+      "slot": "vector",
+      "to": "b900"
+    },
+    {
+      "from": "b900",
+      "slot": "left",
+      "to": "far_ring"
+    },
+    {
+      "from": "b600",
+      "slot": "right",
+      "to": "far_ring"
+    },
+    {
+      "from": "lst",
+      "slot": "raster",
+      "to": "far_stats"
+    },
+    {
+      "from": "far_zones",
+      "slot": "zones",
+      "to": "far_stats"
+    },
+    {
+      "from": "built",
+      "slot": "mask",
+      "to": "far_zones"
+    },
+    {
+      "from": "far_ring",
+      "slot": "vector",
+      "to": "far_zones"
+    },
+    {
+      "from": "b450",
+      "slot": "left",
+      "to": "near_ring"
+    },
+    {
+      "from": "b150",
+      "slot": "right",
+      "to": "near_ring"
+    },
+    {
+      "from": "lst",
+      "slot": "raster",
+      "to": "near_stats"
+    },
+    {
+      "from": "near_zones",
+      "slot": "zones",
+      "to": "near_stats"
+    },
+    {
+      "from": "built",
+      "slot": "mask",
+      "to": "near_zones"
+    },
+    {
+      "from": "near_ring",
+      "slot": "vector",
+      "to": "near_zones"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "b150",
+      "operator": "buffer",
+      "params": {
+        "distance": 150,
+        "geodesic": false
+      }
+    },
+    {
+      "id": "b450",
+      "operator": "buffer",
+      "params": {
+        "distance": 450,
+        "geodesic": false
+      }
+    },
+    {
+      "id": "b600",
+      "operator": "buffer",
+      "params": {
+        "distance": 600,
+        "geodesic": false
+      }
+    },
+    {
+      "id": "b900",
+      "operator": "buffer",
+      "params": {
+        "distance": 900,
+        "geodesic": false
+      }
+    },
+    {
+      "id": "built",
+      "source": "built"
+    },
+    {
+      "id": "far_ring",
+      "operator": "overlay",
+      "params": {
+        "operation": "difference"
+      }
+    },
+    {
+      "id": "far_stats",
+      "operator": "zonal_stats",
+      "params": {
+        "column_prefix": "lst",
+        "input_band": "lst_c",
+        "stats": [
+          "mean",
+          "count",
+          "valid_fraction"
+        ],
+        "zone_id_field": "zone_id"
+      }
+    },
+    {
+      "id": "far_zones",
+      "operator": "clip_vector",
+      "params": {}
+    },
+    {
+      "id": "lakes",
+      "source": "lakes"
+    },
+    {
+      "id": "lst",
+      "source": "lst"
+    },
+    {
+      "id": "near_ring",
+      "operator": "overlay",
+      "params": {
+        "operation": "difference"
+      }
+    },
+    {
+      "id": "near_stats",
+      "operator": "zonal_stats",
+      "params": {
+        "column_prefix": "lst",
+        "input_band": "lst_c",
+        "stats": [
+          "mean",
+          "count",
+          "valid_fraction"
+        ],
+        "zone_id_field": "zone_id"
+      }
+    },
+    {
+      "id": "near_zones",
+      "operator": "clip_vector",
+      "params": {}
+    }
+  ],
+  "outputs": [
+    "far_stats",
+    "far_zones",
+    "near_stats",
+    "near_zones"
+  ],
+  "schema_version": "geoagent-dag/3.0"
+}

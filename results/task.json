@@ -1,0 +1,18 @@
+{
+  "task_requirements": [
+    {
+      "applies_to": "lst",
+      "attribute": "crs",
+      "id": "raster_crs",
+      "relation": "EQ",
+      "value": "EPSG:32649"
+    },
+    {
+      "applies_to": "lst",
+      "attribute": "resolution",
+      "id": "raster_resolution",
+      "relation": "EQ",
+      "value": 30
+    }
+  ]
+}

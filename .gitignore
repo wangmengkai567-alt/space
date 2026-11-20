@@ -1,0 +1,37 @@
+# 本地检出的上游仓库
+/deepseek-harness/
+/geoharness/
+
+# 可重新生成的分析输入、运行状态和中间输出
+/data/inputs/
+/.geoharness/
+/outputs/
+
+# 调用日志、诊断归档和重复打包文件
+/results/deepseek_*.jsonl
+/results/geoharness_l4_diagnostic.zip
+/ppt_figures/wuhan_ppt_figures.zip
+
+# 本地依赖、构建产物和缓存
+.venv/
+node_modules/
+.pnpm-store/
+/build/
+/dist/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+
+# 本地环境变量与临时文件
+.env
+.env.*
+!.env.example
+*.log
+*.gpkg-shm
+*.gpkg-wal
+*.gpkg-journal
+.DS_Store
+Thumbs.db
+Desktop.ini
