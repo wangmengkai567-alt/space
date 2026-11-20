@@ -1,0 +1,9 @@
+[mcp_servers.geoharness]
+command = "uv"
+args = [
+    "run", "--project", "geoharness", "--locked", "--python", "3.12",
+    "--extra", "mcp", "--extra", "geo", "--",
+    "geoharness-mcp", "--workspace", ".",
+]
+startup_timeout_sec = 90
+tool_timeout_sec = 150

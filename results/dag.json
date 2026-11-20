@@ -1,22 +1,22 @@
 {
   "edges": [
     {
-      "from": "lakes",
+      "from": "lake_features",
       "slot": "vector",
       "to": "b150"
     },
     {
-      "from": "lakes",
+      "from": "lake_features",
       "slot": "vector",
       "to": "b450"
     },
     {
-      "from": "lakes",
+      "from": "lake_features",
       "slot": "vector",
       "to": "b600"
     },
     {
-      "from": "lakes",
+      "from": "lake_features",
       "slot": "vector",
       "to": "b900"
     },
@@ -31,7 +31,7 @@
       "to": "far_ring"
     },
     {
-      "from": "lst",
+      "from": "temperature",
       "slot": "raster",
       "to": "far_stats"
     },
@@ -41,7 +41,7 @@
       "to": "far_stats"
     },
     {
-      "from": "built",
+      "from": "urban_mask",
       "slot": "mask",
       "to": "far_zones"
     },
@@ -61,7 +61,7 @@
       "to": "near_ring"
     },
     {
-      "from": "lst",
+      "from": "temperature",
       "slot": "raster",
       "to": "near_stats"
     },
@@ -71,7 +71,7 @@
       "to": "near_stats"
     },
     {
-      "from": "built",
+      "from": "urban_mask",
       "slot": "mask",
       "to": "near_zones"
     },
@@ -115,10 +115,6 @@
       }
     },
     {
-      "id": "built",
-      "source": "built"
-    },
-    {
       "id": "far_ring",
       "operator": "overlay",
       "params": {
@@ -145,12 +141,8 @@
       "params": {}
     },
     {
-      "id": "lakes",
+      "id": "lake_features",
       "source": "lakes"
-    },
-    {
-      "id": "lst",
-      "source": "lst"
     },
     {
       "id": "near_ring",
@@ -177,6 +169,14 @@
       "id": "near_zones",
       "operator": "clip_vector",
       "params": {}
+    },
+    {
+      "id": "temperature",
+      "source": "lst"
+    },
+    {
+      "id": "urban_mask",
+      "source": "built_up"
     }
   ],
   "outputs": [

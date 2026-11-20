@@ -1,46 +1,49 @@
 # 武汉湖泊近岸与远岸地表温度分析
 
-本项目使用 Landsat 8 地表温度和 ESA WorldCover 土地覆盖数据，比较武汉外沙湖、南湖周边近岸（150–450 米）和远岸（600–900 米）建成区的地表温度。DeepSeek Harness 启动本地工作流，GeoHarness 验证并执行空间分析，随后由 Python 脚本独立复算并生成图表。
+本项目使用 Landsat 8 地表温度和 ESA WorldCover 土地覆盖数据，比较武汉外沙湖、南湖周边近岸（150–450 米）和远岸（600–900 米）建成区的地表温度。Codex 根据自然语言任务规划 DAG 并调用 GeoHarness MCP。GeoHarness 验证计划、执行空间分析和导出溯源包，随后由 Python 脚本独立复算并生成图表。
 
 直接查看现有成果，可打开 [项目汇报](results/项目汇报.md)、[温度对照图](results/wuhan_lake_temperature.png)或[统计汇总表](results/lake_temperature_summary.csv)。
 
 ## 在 Windows 上运行
 
-在项目根目录 `work2` 打开 PowerShell。准备 `uv`、Node.js 24.9.0 或更高版本，以及 `deepseek-harness/package.json` 指定的 pnpm 版本。Python 3.12 由 `uv` 管理。以下步骤使用 `data/raw/` 已归档的影像，程序化工作流无需 DeepSeek API Key。
+在项目根目录打开 PowerShell。准备已登录的 Codex 和 `uv`。Python 3.12 由 `uv` 管理，原始影像已归档在 `data/raw/`。
 
 ### 1. 安装依赖并生成输入
 
+首次运行时，将已验证的 GeoHarness 版本检出到项目根目录的 `geoharness/`。
+
+```powershell
+git clone https://github.com/GeoZcx/geoharness.git geoharness
+git -C geoharness checkout --detach b6b871a9d60e04d6cf494e430a60380c14e282bb
+```
+
 ```powershell
 uv sync --project geoharness --locked --python 3.12 --extra mcp --extra geo
-pnpm --dir deepseek-harness install --frozen-lockfile
 uv run --project geoharness --locked --python 3.12 --extra mcp --extra geo -- python workflow/prepare_inputs.py
 ```
 
 预处理在 `data/inputs/analysis/` 生成 `lakes.gpkg`、`built_up.gpkg` 和 `lst_c.tif`。原始文件及校验值见[数据来源](data_sources.md)。
 
-### 2. 启动分析
+### 2. 在 Codex 中运行任务
 
-如果项目移到了其他路径，将 [deepseek-programmatic.patch.yml](workflow/deepseek-programmatic.patch.yml) 中 `wuhan-lake-geoharness` 的 `name` 改为本机 `workflow/run-geoharness.mjs` 的绝对路径，路径用 `/` 分隔。当前配置对应 `D:/My_workspace/project/work2`。
-
-```powershell
-$dsh = (Resolve-Path deepseek-harness).Path
-$env:TSX_TSCONFIG_PATH = Join-Path $dsh 'tsconfig.json'
-$tsx = [uri](Join-Path $dsh 'node_modules/tsx/dist/esm/index.mjs')
-node --import $tsx.AbsoluteUri (Join-Path $dsh 'apps/cli/src/bin.ts') --profile headless --patch workflow/deepseek-geoharness.patch.yml --patch workflow/deepseek-programmatic.patch.yml 'Run the configured Wuhan GeoHarness workflow.'
-```
-
-这条命令在终端运行。成功时会打印带有 `run_id` 和 `trace.path` 的 JSON，并将分区和统计数据写入 `outputs/`。如有报错，查看终端信息和 `results/deepseek_mcp_calls.jsonl` 的末尾。
-
-### 3. 复算并生成成果
-
-在分析成功后，从调用日志读取本次 `export_trace` 返回的 ZIP 路径，再运行汇总脚本。
+[项目 MCP 配置](.codex/config.toml)使用 `uv` 启动本地 GeoHarness。用 Codex 打开并信任项目，从根目录启动一个新会话。使用 CLI 时，可先查看已加载的服务器配置。
 
 ```powershell
-$trace = (Get-Content -Encoding utf8 results/deepseek_mcp_calls.jsonl -Tail 1 | ConvertFrom-Json).output.path
-uv run --project geoharness --locked --python 3.12 --extra mcp --extra geo --with matplotlib -- python workflow/finalize_results.py $trace
+codex mcp get geoharness
+codex
 ```
 
-汇总脚本校验溯源包并独立复算四个分区，更新 `results/` 下的同名 CSV、GeoPackage、地图和溯源 ZIP。分析命令会重写 `results/deepseek_mcp_calls.jsonl`。
+向 Codex 发送「读取 `workflow/codex-task.md`，使用 GeoHarness MCP 完成分析」。[任务说明](workflow/codex-task.md)给出研究问题、数据约束和交付要求。Codex 根据算子契约组织 DAG，使用 GeoHarness 签发的 `verified_hash` 在同一 MCP 会话内执行。
+
+### 3. 查看成果或手动复算
+
+任务会要求 Codex 使用 `export_trace` 返回的 ZIP 生成成果。也可以用本次工具返回的实际路径手动复算。
+
+```powershell
+uv run --project geoharness --locked --python 3.12 --extra mcp --extra geo --with matplotlib -- python workflow/finalize_results.py "<本次 export_trace 返回的 ZIP 路径>"
+```
+
+汇总脚本核对溯源包和执行文件的校验值，独立复算四个分区，并更新 `results/` 下的统计、分区、地图与溯源 ZIP。
 
 ## 结果文件
 

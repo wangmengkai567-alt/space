@@ -1,6 +1,20 @@
 {
   "task_requirements": [
     {
+      "applies_to": "lakes",
+      "attribute": "crs",
+      "id": "lake_crs",
+      "relation": "EQ",
+      "value": "EPSG:32649"
+    },
+    {
+      "applies_to": "built_up",
+      "attribute": "crs",
+      "id": "built_crs",
+      "relation": "EQ",
+      "value": "EPSG:32649"
+    },
+    {
       "applies_to": "lst",
       "attribute": "crs",
       "id": "raster_crs",
@@ -13,6 +27,22 @@
       "id": "raster_resolution",
       "relation": "EQ",
       "value": 30
+    },
+    {
+      "applies_to": "lst",
+      "attribute": "bands",
+      "id": "temperature_band",
+      "relation": "EQ",
+      "value": [
+        "lst_c"
+      ]
+    },
+    {
+      "applies_to": "lst",
+      "attribute": "value_kind",
+      "id": "temperature_value_kind",
+      "relation": "EQ",
+      "value": "continuous"
     }
   ]
 }
